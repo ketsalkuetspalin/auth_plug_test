@@ -5,6 +5,7 @@ defmodule ResuelveAuth.Plug.EnsureAuth do
   """
 
   @expected_field "id"
+  @jwt_key Application.get_env(:resuelve_auth, :jwt_key)
 
   @spec init(map) :: map
   def init(opts) do
@@ -25,17 +26,20 @@ defmodule ResuelveAuth.Plug.EnsureAuth do
 
   defp isAuthenticated(conn, _) do
     auth_token = get_req_header(conn, "authorization")
-    url = "#{System.get_env("AUTH_HOST")}/api/sessions"
-
-    headers = ["Authorization": "#{auth_token}", "Accept": "Application/json; Charset=utf-8"]
-    options = [recv_timeout: 30_000]
-    response = HTTPoison.get!(url, headers, options)
-    response_auth =
-      response.body
-      |> Poison.decode!
-      |> Map.get(@expected_field)
-    response_auth
-  end
+    if auth_token == @jwt_key and Mix.env == :test do
+       "AUTHORIZED" 
+    else
+      url = "#{System.get_env("AUTH_HOST")}/api/sessions"
+      headers = ["Authorization": "#{auth_token}", "Accept": "Application/json; Charset=utf-8"]
+      options = [recv_timeout: 30_000]
+      response = HTTPoison.get!(url, headers, options)
+      response_auth =
+        response.body
+        |> Poison.decode!
+        |> Map.get(@expected_field)
+      response_auth
+    end
+   end
 
   defp handle_error(%Plug.Conn{params: params} = conn, reason, opts) do
     conn = conn |> assign(:auth_failure, reason) |> halt
