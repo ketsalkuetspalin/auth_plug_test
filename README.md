@@ -47,3 +47,14 @@ plug ResuelveAuth.Plug.EnsureAuth, handler: delegadoController
 El controlador delegado debe implementar el metodo:
 
 **unauthenticated(String.t, map)**
+
+## Desarrollo
+
+# Agregar hook pre-commit para pruebas unitarias y credo
+```shell
+cp pre-commit.dist .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
+
+_Generar coverage de pruebas unitarias en cover/excoveralls.html_
+```shell
+MIX_ENV=test mix coveralls.html

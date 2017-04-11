@@ -56,6 +56,7 @@ defmodule ResuelveAuth.Mixfile do
 
       {:credo,        "~> 0.6.1", only: [:dev, :test]}, # Herrameinta para analisis de codigo
       {:excoveralls,  "~> 0.6",  only: :test}, # Coverage de pruebas unitarias
+      {:mock,        "~> 0.2.0", only: [:test]} # Para mocks en pruebas unitarias.
     ]
   end
 
