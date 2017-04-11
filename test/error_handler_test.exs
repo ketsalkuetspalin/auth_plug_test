@@ -10,19 +10,6 @@ defmodule ResuelveAuth.Plug.ErrorHandlerTest do
     {:ok, %{conn: conn}}
   end
 
-  test "unauthenticated/2 sends a 401 response when text/html", %{conn: conn} do
-    conn = put_req_header(conn, "accept", "text/html")
-
-    {status, headers, body} =
-      conn
-      |> ErrorHandler.unauthenticated(%{})
-      |> sent_resp
-
-    assert status == 401
-    assert content_type(headers) == "text/plain"
-    assert body == "Unauthenticated"
-  end
-
   test "unauthenticated/2 sends a 401 response when json", %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
 
@@ -36,22 +23,11 @@ defmodule ResuelveAuth.Plug.ErrorHandlerTest do
     assert body ==  Poison.encode!(%{errors: ["Unauthenticated"]})
   end
 
-  test "unauthenticated/2 when no accept header", %{conn: conn} do
-    {status, headers, body} =
-      conn
-      |> ErrorHandler.unauthenticated(%{})
-      |> sent_resp
-
-    assert status == 401
-    assert content_type(headers) == "text/plain"
-    assert body ==  "Unauthenticated"
-  end
-
-   defp content_type(headers) do
+  defp content_type(headers) do
     {:ok, type, subtype, _params} =
       headers
-        |> header_value("content-type")
-        |> Plug.Conn.Utils.content_type
+      |> header_value("content-type")
+      |> Plug.Conn.Utils.content_type
     "#{type}/#{subtype}"
   end
 

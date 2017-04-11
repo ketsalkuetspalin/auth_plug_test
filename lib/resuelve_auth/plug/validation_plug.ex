@@ -33,11 +33,9 @@ defmodule ResuelveAuth.Plug.EnsureAuth do
       headers = ["Authorization": "#{auth_token}", "Accept": "Application/json; Charset=utf-8"]
       options = [recv_timeout: 30_000]
       response = HTTPoison.get!(url, headers, options)
-      response_auth =
-        response.body
-        |> Poison.decode!
-        |> Map.get(@expected_field)
-      response_auth
+      response.body
+      |> Poison.decode!
+      |> Map.get(@expected_field)
     end
    end
 

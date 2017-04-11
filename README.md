@@ -40,7 +40,7 @@ Debe contener la direccion del servidor de autenticacion
 
 Solo es necesario agregar la referencia del plug.
 
-``èlixir
+```elixir
 plug ResuelveAuth.Plug.EnsureAuth, handler: delegadoController
 ```
 
@@ -54,7 +54,8 @@ El controlador delegado debe implementar el metodo:
 ```shell
 cp pre-commit.dist .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
-
+```
 _Generar coverage de pruebas unitarias en cover/excoveralls.html_
 ```shell
 MIX_ENV=test mix coveralls.html
+```
