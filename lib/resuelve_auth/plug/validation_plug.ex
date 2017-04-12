@@ -1,9 +1,8 @@
 defmodule ResuelveAuth.Plug.EnsureAuth do
   import Plug.Conn
   @moduledoc """
-  Plug para validar el token en el api de autenticacion en resuelve.
+  Plug to validate token issued by Resuelve Authentication API
   """
-
   @expected_field "id"
 
   @spec init(map) :: map
@@ -17,32 +16,22 @@ defmodule ResuelveAuth.Plug.EnsureAuth do
 
   @spec call(Plug.Conn, map) :: Plug.conn
   def call(conn, opts) do
-
-    if Mix.env == :test do
-      conn
-    else
-      case isAuthenticated(conn, opts) do
-        "UNAUTHORIZED" -> handle_error(conn, {:error, :invalid_token}, opts)
-        "AUTHORIZED"   -> conn
-      end
+    case isAuthorized(conn, opts) do
+      "UNAUTHORIZED" -> handle_error(conn, {:error, :invalid_token}, opts)
+      "AUTHORIZED"   -> conn
     end
   end
 
-  defp isAuthenticated(conn, _) do
+  defp isAuthorized(conn, _) do
     auth_token = get_req_header(conn, "authorization")
-    url = "#{System.get_env("AUTH_HOST")}/api/sessions"
-    
-    IO.inspect url
-    headers = ["Authorization": "#{auth_token}", "Accept": "Application/json; Charset=utf-8"]
-    options = [recv_timeout: 30_000]
-    response = HTTPoison.get!(url, headers, options)
-    IO.inspect response
-    response_auth =
+      url = "#{System.get_env("AUTH_HOST")}/api/sessions"
+      headers = ["Authorization": "#{auth_token}", "Accept": "Application/json; Charset=utf-8"]
+      options = [recv_timeout: 30_000]
+      response = HTTPoison.get!(url, headers, options)
       response.body
       |> Poison.decode!
       |> Map.get(@expected_field)
-    response_auth
-  end
+    end
 
   defp handle_error(%Plug.Conn{params: params} = conn, reason, opts) do
     conn = conn |> assign(:auth_failure, reason) |> halt
@@ -52,6 +41,10 @@ defmodule ResuelveAuth.Plug.EnsureAuth do
 
   defp build_handler_tuple(%{handler: mod}) do
     {mod, :unauthenticated}
+  end
+
+  defp build_handler_tuple(_) do
+    {ResuelveAuth.Plug.ErrorHandler, :unauthenticated}
   end
 
 end
