@@ -1,6 +1,6 @@
 defmodule ResuelveAuth.Plug.ErrorHandler do
   @moduledoc """
-  A default error handler that can be used for failed authentication
+  a default error handler that can be used for failed authentication
   """
 
   @callback unauthenticated(Plug.Conn.t, map) :: Plug.Conn.t

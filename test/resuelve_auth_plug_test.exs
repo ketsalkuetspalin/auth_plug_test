@@ -36,7 +36,7 @@ defmodule ResuelveAuthTest do
     assert handler_opts == {TestHandler, :unauthenticated}
   end
 
-  test "when is connected", %{conn: conn} do
+  test "when is authorized", %{conn: conn} do
     with_mocks([
       {
         HTTPoison,
@@ -56,7 +56,7 @@ defmodule ResuelveAuthTest do
     end
   end
 
-  test "it halts the connection", %{conn: conn} do
+  test "when is not authorized", %{conn: conn} do
     with_mocks([
       {
         HTTPoison,
