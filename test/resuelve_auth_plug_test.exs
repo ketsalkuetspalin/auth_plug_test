@@ -4,6 +4,7 @@ defmodule ResuelveAuthTest do
   doctest ResuelveAuth
 
   import Mock
+  import ResuelveAuth.TestHelper
 
   alias ResuelveAuth.Plug.EnsureAuth
 
@@ -77,11 +78,6 @@ defmodule ResuelveAuthTest do
 
   defp must_authenticate?(conn) do
     conn.assigns[:auth_resuelve] == :unauthenticated
-  end
-
-  defp run_plug(conn, plug_module, plug_opts) do
-    opts = apply(plug_module, :init, [plug_opts])
-    apply(plug_module, :call, [conn, opts])
   end
 
 end
