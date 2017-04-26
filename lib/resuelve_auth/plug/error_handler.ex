@@ -9,7 +9,14 @@ defmodule ResuelveAuth.Plug.ErrorHandler do
 
   @spec unauthenticated(Plug.Conn.t, map) :: Plug.Conn.t
   def unauthenticated(conn, _params) do
+    IO.puts "unauth"
     respond(conn, response_type(conn), 401, "Unauthenticated")
+  end
+
+  @spec unauthorized(Plug.Conn.t, map) :: Plug.Conn.t
+  def unauthorized(conn, _params) do
+    IO.puts "rized"
+    respond(conn, response_type(conn), 401, "Unauthorized")
   end
 
   defp respond(conn, :json, status, msg) do
