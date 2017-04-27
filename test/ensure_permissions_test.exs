@@ -1,16 +1,22 @@
-defmodule Resuelve.Plug.EnsurePermissionTest do
+defmodule ResuelveAuth.Plug.EnsurePermissionTest do
   @moduledoc false
   use ExUnit.Case, async: true
   use Plug.Test
-  
+
   import Mock
   import ResuelveAuth.TestHelper
 
   alias ResuelveAuth.Plug.EnsurePermissions
 
   defmodule TestPermissionHandler do
-    @moduledoc false
+    @moduledoc """
+    Tests for ResuelveAuth.Plug.EnsurePermissions plug
+    """
 
+    @doc "
+    A function that handle when permissions are invalid
+    Creates a mark to validate a connection pass through this
+    "
     def unauthorized(conn, _) do
       IO.puts "Unauthorized"
       conn

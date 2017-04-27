@@ -1,12 +1,12 @@
 # ResuelveAuth
 
 ## ¿Que hace?
-Es un plug diseñado para validar el token de autenticacion en el servidor donde se genero dicho token
+Es un plug diseñado para validar el token de autenticación en el servidor donde se genero dicho token
 
 ## ¿Como lo hace?
 Toma el token de la cabecera
-Lo envia al servidor de autenticacion
-Si es valido, permite a la conexion continuar
+Lo envía al servidor de autenticación
+Si es válido, permite a la conexión continuar
 
 ## Uso
 
@@ -30,28 +30,27 @@ Se necesita una variable de entorno
 ```bash
 export AUTH_HOST=http://localhost:4000
 ```
-Debe contener la direccion del servidor de autenticacion
+Debe contener la dirección del servidor de autenticación
 
 # EnsureAuth Plug
 
-Este plug nos sirve para dar acceso a conexiones que tengan un token valido en el header de Autenticación
-
-## Configuracion
+Este plug nos sirve para dar acceso a conexiones que tengan un token válido en el header de 'Authorization'
+## Configuración
 
 Se debe configurar el nombre del modulo dependiendo del entorno.
-Para esto se usara una variable  de la aplicación
+Para esto se usara una variable de la aplicación
 
-### In config/dev.exs
+### En config/dev.exs
 ```elixir
 config :my_app, :auth_plug, ResuelveAuth.Plug.EnsureAuth
 ```
 
-### In config/test.exs
+### En config/test.exs
 ```elixir
 config :my_app, :auth_plug, ResuelveAuth.Plug.EnsureAuthTest
 ```
 
-### In config/prod.exs
+### En config/prod.exs
 ```elixir
 config :my_app, :auth_plug, ResuelveAuth.Plug.EnsureAuth
 ```
@@ -65,7 +64,7 @@ Solo es necesario agregar la referencia del plug.
 plug @auth_plug, handler: MyHandlerController
 ```
 
-El controlador delegado debe implementar el metodo:
+El controlador delegado debe implementar el método:
 
 **unauthenticated(String.t, map)**
 
@@ -76,19 +75,19 @@ Este plug sirve para saber si un usuario autenticado tiene permisos para cierto 
 ## Configuración
 
 Se debe configurar el nombre del modulo dependiendo del entorno.
-Para esto se usara una variable  de la aplicación
+Para esto se usara una variable de la aplicación
 
-### In config/dev.exs
+### En config/dev.exs
 ```elixir
 config :my_app, :perm_plug, ResuelveAuth.Plug.EnsurePermissions
 ```
 
-### In config/test.exs
+### En config/test.exs
 ```elixir
 config :my_app, :perm_plug, ResuelveAuth.Plug.EnsurePermissionsTest
 ```
 
-### In config/prod.exs
+### En config/prod.exs
 ```elixir
 config :my_app, :perm_plug, ResuelveAuth.Plug.EnsurePermissions
 ```
@@ -107,7 +106,7 @@ Es recomendable agregar un modulo como handler
 
 ```
 
-El modulo delegado debe implementar el metodo:
+El modulo delegado debe implementar el método:
 
 **unathorized(String.t, map)**
 

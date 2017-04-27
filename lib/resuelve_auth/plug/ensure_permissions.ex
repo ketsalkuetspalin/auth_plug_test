@@ -1,6 +1,6 @@
 defmodule ResuelveAuth.Plug.EnsurePermissions do
   @moduledoc """
-  Use this plug to ensure that there are the
+  This plug provides permissions checking.
   correct permissions set in the claims found on the connection.
   ### Example
       alias ResuelveAuth.Plug.EnsurePermissions
@@ -17,7 +17,7 @@ defmodule ResuelveAuth.Plug.EnsurePermissions do
                               %{default: [:profile]}],
                               handler: SomeMod
   On failure will be handed the connection with the conn,
-  and params where reason: `:forbidden`
+  and parameters where reason: `:forbidden`
   The handler will be called on failure.
   The `:unauthorized` function will be called when a failure is detected.
   This is based on Guardian implementation of permissions matching
@@ -26,6 +26,10 @@ defmodule ResuelveAuth.Plug.EnsurePermissions do
   require Logger
   import Plug.Conn
 
+
+  @doc """
+  Initialize plug with specified options
+  """
   @spec init(map) :: map
   def init(opts) do
     opts = Enum.into(opts, %{})
@@ -61,7 +65,7 @@ defmodule ResuelveAuth.Plug.EnsurePermissions do
 
   end
 
-  @doc "Bridge to api permissions matching"
+  @doc "This function check permissions calling a service"
   @spec call(Plug.Conn, map) :: Plug.Conn
   def call(conn, opts) do
     auth_token = get_req_header(conn, "authorization")
@@ -75,13 +79,13 @@ defmodule ResuelveAuth.Plug.EnsurePermissions do
   end
 
 
-  # When any permissions where set for mathching
+  # When any permissions where set for matching
   defp matches_permissions?(_, []), do: true
 
   # Do the connection to permissions matching service
   defp matches_permissions?(auth_token, sets) do
 
-    # Connection to auth api
+    # Connection to authentication Api
     url = "#{System.get_env("AUTH_HOST")}/api/permissions"
     headers = ["Authorization": "#{auth_token}", "Accept": "Application/json; Charset=utf-8", "Content-type": "application/json"]
     options = [recv_timeout: 30_000]

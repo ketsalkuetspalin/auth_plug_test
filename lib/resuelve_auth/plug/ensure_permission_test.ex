@@ -1,15 +1,16 @@
 defmodule ResuelveAuth.Plug.EnsurePermissionsTest do
   @moduledoc """
-  Ths module is to avoid matching permissions when developing
+  This module is a mock of EnsurePermissions Plug
+  You should use this when testing instead of the real one
   """
 
   require Logger
-
+  @doc "Initialize plug with options"
   @spec init(map) :: map
   def init(_opts) do
   end
 
-  @doc "Bridge to api permissions matching"
+  @doc " "
   @spec call(Plug.Conn, map) :: Plug.Conn
   def call(conn, _opts) do
     conn
