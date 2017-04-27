@@ -7,15 +7,19 @@ defmodule ResuelveAuth.Plug.ErrorHandler do
 
   import Plug.Conn
 
+  @doc """
+  Default implementation of handler function for EnsureAuth Plug
+  """
   @spec unauthenticated(Plug.Conn.t, map) :: Plug.Conn.t
   def unauthenticated(conn, _params) do
-    IO.puts "unauth"
     respond(conn, response_type(conn), 401, "Unauthenticated")
   end
 
+  @doc """
+  Default implementation of handler function for EnsurePermissions Plug
+  """
   @spec unauthorized(Plug.Conn.t, map) :: Plug.Conn.t
   def unauthorized(conn, _params) do
-    IO.puts "rized"
     respond(conn, response_type(conn), 401, "Unauthorized")
   end
 

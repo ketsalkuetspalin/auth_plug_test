@@ -12,7 +12,7 @@ defmodule Resuelve.Plug.EnsurePermissionTest do
     @moduledoc false
 
     def unauthorized(conn, _) do
-      IO.puts "Unauth"
+      IO.puts "Unauthorized"
       conn
       |> Plug.Conn.assign(:resuelve_spec, :forbidden)
       |> Plug.Conn.send_resp(401, "Unauthorized")
@@ -51,12 +51,28 @@ defmodule Resuelve.Plug.EnsurePermissionTest do
       expected_conn = run_plug(
         conn,
         EnsurePermissions,
-        handler: TestPermissionHandler
+        [
+          handler: TestPermissionHandler,
+          one_of: %{"sets" => [%{"admin" => ["read"]}, %{"client" => ["read"]}]}
+        ]
       )
       refute expected_conn.halted
       refute unauthorized?(expected_conn)
     end
   end
+
+  test "call when not parameters are sent", %{conn: conn} do
+    expected_conn = run_plug(
+      conn,
+      EnsurePermissions,
+      [
+        handler: TestPermissionHandler
+      ]
+    )
+    refute expected_conn.halted
+    refute unauthorized?(expected_conn)
+  end
+
 
   test "call when is not authorized", %{conn: conn} do
     with_mocks([
@@ -71,7 +87,10 @@ defmodule Resuelve.Plug.EnsurePermissionTest do
       expected_conn = run_plug(
         conn,
         EnsurePermissions,
-        handler: TestPermissionHandler
+        [
+          handler: TestPermissionHandler,
+          one_of: %{"sets" => [%{"admin" => ["read"]}, %{"client" => ["read"]}]}
+        ]
       )
       assert  unauthorized? expected_conn
     end

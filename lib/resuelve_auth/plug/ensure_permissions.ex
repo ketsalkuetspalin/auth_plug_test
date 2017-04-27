@@ -3,7 +3,7 @@ defmodule ResuelveAuth.Plug.EnsurePermissions do
   Use this plug to ensure that there are the
   correct permissions set in the claims found on the connection.
   ### Example
-      alias Resuelve.Plug.EnsurePermissions
+      alias ResuelveAuth.Plug.EnsurePermissions
       # read and write permissions for the admin set
       plug EnsurePermissions, admin: [:read, :write], handler: SomeMod,
       # read AND write permissions for the admin set
@@ -20,7 +20,7 @@ defmodule ResuelveAuth.Plug.EnsurePermissions do
   and params where reason: `:forbidden`
   The handler will be called on failure.
   The `:unauthorized` function will be called when a failure is detected.
-  This based on Guardian implementation of permissions matching
+  This is based on Guardian implementation of permissions matching
   """
 
   require Logger
@@ -69,15 +69,17 @@ defmodule ResuelveAuth.Plug.EnsurePermissions do
     if  matches_permissions?(auth_token, sets) do
       conn
     else
-      IO.puts "here"
       handle_error(conn, opts)
     end
 
   end
 
+
+  # When any permissions where set for mathching
   defp matches_permissions?(_, []), do: true
+
+  # Do the connection to permissions matching service
   defp matches_permissions?(auth_token, sets) do
-    Logger.info "matching permissions..."
 
     # Connection to auth api
     url = "#{System.get_env("AUTH_HOST")}/api/permissions"
@@ -86,22 +88,16 @@ defmodule ResuelveAuth.Plug.EnsurePermissions do
     body = Poison.encode! %{sets: sets}
 
     response = HTTPoison.post!(url, body, headers, options)
-    Logger.info "Service response: "
-
-    IO.inspect response 
 
     is_authorized?
       = response.body
       |> Poison.decode!
       |> Map.get("id")
-      Logger.info "id"
-    IO.inspect is_authorized?
     is_authorized? == "AUTHORIZED"
   end
 
   #  If there is an error, halt the connection and send a reason
   defp handle_error(%Plug.Conn{params: params} = conn, opts) do
-    IO.puts "handling error"
     conn = conn |> assign(:auth_failure, :forbidden) |> halt
     params = Map.merge(params, %{reason: :forbidden})
 
