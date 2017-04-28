@@ -18,7 +18,6 @@ defmodule ResuelveAuth.Plug.EnsurePermissionTest do
     Creates a mark to validate a connection pass through this
     "
     def unauthorized(conn, _) do
-      IO.puts "Unauthorized"
       conn
       |> Plug.Conn.assign(:resuelve_spec, :forbidden)
       |> Plug.Conn.send_resp(401, "Unauthorized")
@@ -44,12 +43,29 @@ defmodule ResuelveAuth.Plug.EnsurePermissionTest do
     assert handler_opts == {TestPermissionHandler, :unauthorized}
   end
 
+  test "init/1 uses handler and a single set of perms" do
+    opts = EnsurePermissions.init([handler: TestPermissionHandler, admin: [:write]])
+
+    assert opts ==  %{handler: {TestPermissionHandler,:unauthorized},
+                      key: :default,
+                      perm_sets: [%{admin: [:write]}]}
+  end
+
+  test "init/1 uses the one_of option and multiple perms" do
+    opts = EnsurePermissions.init([handler: TestPermissionHandler,
+                                   one_of: [%{default: [:read, :write]}, %{other: [:read]}]])
+
+    assert opts ==  %{handler: {TestPermissionHandler,:unauthorized},
+                      key: :default,
+                      perm_sets: [%{default: [:read, :write]}, %{other: [:read]}]}
+  end
+
   test "call when is authorized", %{conn: conn} do
     with_mocks([
       {
         HTTPoison,
         [],
-        [
+       [
           post!: fn(_url, _body, _headers, _options) -> %{status_code: 200, body: "{ \"id\": \"AUTHORIZED\"}"} end
         ]
       }
